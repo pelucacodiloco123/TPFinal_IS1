@@ -64,6 +64,7 @@ formE1.addEventListener('submit', (event) => {
 	const systemURL = {
 		listarTicket: 'http://127.0.0.1:5500/HTML/listarTicket.html',
 		loginCliente: 'http://127.0.0.1:5500/HTML/loginClient.html',
+		signup: 'http://127.0.0.1:5500/HTML/signinClient.html'
 	};
 
 	const RESTAPI = {

@@ -252,9 +252,10 @@ app.post('/api/addCliente', (req, res) => {
                 hoy = dd + '/' + mm + '/' + yyyy;
 
                 const newCliente = {
-                    id: contacto,
+                    id: crypto.randomUUID(),  //se añado la funcion para generar id randomico
                     nombre: nombre,
                     password: password,
+                    contacto: contacto, //Contacto era el id, lo cual estaba mal puesto.
                     activo: true,
                     registrado: true,
                     primer_ingreso: false,

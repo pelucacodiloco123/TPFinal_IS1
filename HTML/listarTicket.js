@@ -24,7 +24,7 @@ console.log("Comienza listarTicket.js");
 
 var query = getQueryParams(document.location.search);
 console.log("id:"+query.id);
-console.log("nombre:"+query.nombre);
+console.log("nombre:"+query.nombre); /*Aca se modificaron los datos que se ven al mostrar ticket*/
 console.log("contacto:"+query.contacto);
 console.log("ultima_fecha:"+query.fecha_ultimo_ingreso);
 console.log("mode:"+query.mode);
