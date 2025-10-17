@@ -101,17 +101,17 @@ app.get('/api/cliente', (req, res) => {
 */
 
 
-app.post('/api/loginCliente', async (req, res) => {
+app.post('/api/loginCliente', async (req, res) => { //async se usa para declarar una función asíncrona, es decir, una función que puede ejecutar operaciones que toman tiempo.
 
-    const {contacto} = req.body;
-    const {password} = req.body;
+    const {contacto} = req.body; //“Creá dos variables llamadas contacto y password y asignales los valores de las propiedades contacto y password del objeto body”.
+    const {password} = req.body; //El request es una funcion del express.js, que es basicamente le hace un pedido a la database
     const resultados = await scanDb(contacto); //Con el mail se busca los datos del cliente, y se usa un await para esperar que termine la funcion.
 
-    if (!resultados || resultados.length == 0) {
+    if (!resultados || resultados.length == 0) { //corrobora que devuelva un resultado
         res.status(400).send({response: "ERROR", menssage: "Cliente no encontrado"});
         return;
     }
-    console.log("resultados="+JSON.stringify(resultados))
+    console.log("resultados="+JSON.stringify(resultados)) //convierte a json el resultado
     
     console.log("loginCliente: contacto(" + contacto + ") password (" + password + ")");
 
@@ -370,13 +370,11 @@ app.post('/api/updateCliente', (req, res) => {
 /api/resetCliente
 Permite cambiar la password de un cliente
 */
-app.post('/api/resetCliente', (req, res) => {
+app.post('/api/resetCliente', async (req, res) => { //se usa para declarar una función asíncrona, osea, una función que puede ejecutar operaciones que toman tiempo
+    const { contacto, password } = req.body;
 
-    const { id } = req.body;
-    const { password } = req.body;
-
-    if (!id) {
-        res.status(400).send({ response: "ERROR", message: "Id no informada" });
+    if (!contacto) {
+        res.status(400).send({ response: "ERROR", message: "Contacto no informado" });
         return;
     }
 
@@ -385,52 +383,41 @@ app.post('/api/resetCliente', (req, res) => {
         return;
     }
 
-    var params = {
-        TableName: "cliente",
-        Key: {
-            "id": id
-            //test use "id": "0533a95d-7eef-4c6b-b753-1a41c9d1fbd0"   
-        }
-    };
-
-    docClient.get(params, function (err, data) {
-        if (err) {
-            res.status(400).send(JSON.stringify({ response: "ERROR", message: "DB access error " + null }));
+    try {
+        // Buscar el cliente por contacto
+        const resultados = await scanDb(contacto); //El scandb busca al cliente a partir de su contacto dentro de la data base
+        if (!resultados || resultados.length === 0) { //Si no encuentra el cliente
+            res.status(400).send({ response: "ERROR", message: "Cliente no encontrado" });
             return;
-        } else {
-
-            if (Object.keys(data).length == 0) {
-                res.status(400).send(JSON.stringify({ "response": "ERROR", message: "Cliente no existe" }), null, 2);
-                return;
-            } else {
-
-                const paramsUpdate = {
-
-                    ExpressionAttributeNames: {
-                        "#p": "password"
-                    },
-                    ExpressionAttributeValues: {
-                        ":p": password
-                    },
-                    Key: {
-                        "id": id
-                    },
-                    ReturnValues: "ALL_NEW",
-                    TableName: "cliente",
-                    UpdateExpression: "SET #p = :p"
-                };
-                docClient.update(paramsUpdate, function (err, data) {
-                    if (err) {
-                        res.status(400).send(JSON.stringify({ response: "ERROR", message: "DB access error " + err }));
-                        return;
-                    } else {
-                        res.status(200).send(JSON.stringify({ response: "OK", message: "updated", "data": data }));
-                    }
-                });
-            }
         }
-    })
+
+        const id = resultados[0].id; //Al igual que el login por mail, el database solo acepta ids, asi que a partir del mail de la persona, solo se agarra su id para continuar con el proceso
+
+        // Preparar actualización
+       const paramsUpdate = {                               // Se crea un objeto de configuración para la operación "update" de DynamoDB
+    TableName: "cliente",                            // Nombre de la tabla en la base de datos donde se hará la actualización
+    Key: { id },                                     // Identifica el registro que se va a modificar usando su clave primaria "id"
+    UpdateExpression: "SET #p = :p",                 // Indica qué campo se va a actualizar (en este caso, el alias "#p") y con qué valor (":p")
+    ExpressionAttributeNames: { "#p": "password" },  // Define el alias "#p" como referencia al atributo real "password" en la tabla
+    ExpressionAttributeValues: { ":p": password },   // Asigna el valor que reemplazará al campo "password" (el valor viene del body del request)
+    ReturnValues: "ALL_NEW"                          // Pide que DynamoDB devuelva todos los valores del registro después de la actualización
+};
+
+
+        //Ejecutar el update
+        docClient.update(paramsUpdate, function (err, data) {
+            if (err) {
+                res.status(400).send({ response: "ERROR", message: "DB access error: " + err });
+            } else {
+                res.status(200).send({ response: "OK", message: "Contraseña actualizada", data });
+            }
+        });
+    } catch (error) {
+        console.error("Error en resetCliente:", error);
+        res.status(500).send({ response: "ERROR", message: "Error interno del servidor" });
+    }
 });
+
 /*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 /*                                                       API REST ticket                                                             *
 /*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
