@@ -96,10 +96,10 @@ formE1.addEventListener('submit', (event) => {
 
 
 
-		console.log('API REST:' + RESTAPI.loginCliente);
-		console.log(login);
-		console.log('login(' + JSON.stringify(login) + ')');
-		console.log('options ' + JSON.stringify(options));
+		// Logs seguros (sin password)
+      console.log('API REST:', RESTAPI.loginCliente);
+      console.log('loginCliente: contacto(' + login.contacto + ')');
+       console.log('options (body oculto por seguridad)');
 		var API = RESTAPI.loginCliente;
 		var APIoptions = options;
 
