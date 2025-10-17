@@ -1,23 +1,20 @@
-/* CambioContra.js
-   Valida que las dos contraseñas nuevas coincidan y llama a /api/resetCliente
-*/
+const form = document.querySelector("#resetForm"); //El form del cambiocontra tiene este id
+const mensaje = document.querySelector("#resultado1"); //Este es el mensaje de error
 
-const form = document.querySelector("#resetForm");
-const mensaje = document.querySelector("#resultado1");
-
-form.addEventListener("submit", async (e) => {
+form.addEventListener("submit", async (e) => { //Indica que va a haber una espera
   e.preventDefault();
 
   const data = Object.fromEntries(new FormData(form));
 
-  if (data.contraseña1 !== data.contraseña2) {
+  if (data.password !== data.password2) { //Comprueba si las contraseñas son iguales
+    mensaje.style.color = "red";
     mensaje.textContent = "Las contraseñas no coinciden";
     return;
   }
 
   const body = {
     contacto: data.contacto,
-    password: data.contraseña1,
+    password: data.password,
   };
 
   try {
@@ -31,13 +28,16 @@ form.addEventListener("submit", async (e) => {
 
     if (json.response === "OK") {
       mensaje.className = "exito";
-      mensaje.textContent = "Contraseña actualizada. Redirigiendo...";
-      setTimeout(() => (window.location.href = "loginClient.html"), 1500);
+      mensaje.style.color = "green";
+      mensaje.textContent = "Contraseña actualizada.";
+     (window.location.href = "loginClient.html");
     } else {
       mensaje.className = "mensaje";
+      mensaje.style.color = "red";
       mensaje.textContent = json.message || "Error al actualizar";
     }
   } catch (err) {
+    mensaje.style.color = "red";
     mensaje.textContent = "Error de red: " + err;
   }
 });
