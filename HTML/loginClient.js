@@ -23,7 +23,7 @@ formE1.addEventListener('submit', (event) => {
 			'Debe informar usuario para  completar el acceso';
 		return;
 	}
-	 //se dividio en dos como el diseño pedido en el tp.
+	//se dividio en dos como el diseño pedido en el tp.
 	if (data.password == '') { //Aca se remplaza para ver que error de dato sucede al insertarse. 
 		console.log('debe indicar password');
 		document.getElementById('resultado3').style.color = 'RED';
@@ -61,12 +61,17 @@ formE1.addEventListener('submit', (event) => {
 
 	const tpl = document.createDocumentFragment();
 
+
+	// URLs de las páginas HTML locales
 	const systemURL = {
 		listarTicket: 'http://127.0.0.1:5500/HTML/listarTicket.html',
 		loginCliente: 'http://127.0.0.1:5500/HTML/loginClient.html',
 		signup: 'http://127.0.0.1:5500/HTML/signinClient.html'
 	};
 
+	// URLs de endpoints de la API del backend
+	// (Son las que se usan para enviar o recibir datos del servidor con POST o GET)
+	// Devuelven datos en formato JSON
 	const RESTAPI = {
 		loginCliente: 'http://localhost:8080/api/loginCliente',
 		listarTicket: 'http://localhost:8080/api/listarTicket',
@@ -97,9 +102,9 @@ formE1.addEventListener('submit', (event) => {
 
 
 		// Logs seguros (sin password)
-      console.log('API REST:', RESTAPI.loginCliente);
-      console.log('loginCliente: contacto(' + login.contacto + ')');
-       console.log('options (body oculto por seguridad)');
+		console.log('API REST:', RESTAPI.loginCliente);
+		console.log('loginCliente: contacto(' + login.contacto + ')');
+		console.log('options (body oculto por seguridad)');
 		var API = RESTAPI.loginCliente;
 		var APIoptions = options;
 
