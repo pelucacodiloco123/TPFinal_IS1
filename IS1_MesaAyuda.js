@@ -103,16 +103,16 @@ app.get('/api/cliente', (req, res) => {
 
 app.post('/api/loginCliente', async (req, res) => { //async se usa para declarar una función asíncrona, es decir, una función que puede ejecutar operaciones que toman tiempo.
 
-    const {contacto} = req.body; //“Creá dos variables llamadas contacto y password y asignales los valores de las propiedades contacto y password del objeto body”.
-    const {password} = req.body; //El request es una funcion del express.js, que es basicamente le hace un pedido a la database
+    const { contacto } = req.body; //“Creá dos variables llamadas contacto y password y asignales los valores de las propiedades contacto y password del objeto body”.
+    const { password } = req.body; //El request es una funcion del express.js, que es basicamente le hace un pedido a la database
     const resultados = await scanDb(contacto); //Con el mail se busca los datos del cliente, y se usa un await para esperar que termine la funcion.
 
     if (!resultados || resultados.length == 0) { //corrobora que devuelva un resultado
-        res.status(400).send({response: "ERROR", menssage: "Cliente no encontrado"});
+        res.status(400).send({ response: "ERROR", menssage: "Cliente no encontrado" });
         return;
     }
-    console.log("resultados="+JSON.stringify(resultados)) //convierte a json el resultado
-    
+    console.log("resultados=" + JSON.stringify(resultados)) //convierte a json el resultado
+
     console.log("loginCliente: contacto(" + contacto + ") password (" + password + ")");
 
     if (!password) {
@@ -123,8 +123,8 @@ app.post('/api/loginCliente', async (req, res) => { //async se usa para declarar
         res.status(400).send({ response: "ERROR", message: "Contacto no informado" });
         return;
     }
-   const cliente = resultados[0]; //Aca busca en la posicion 0 donde estan los datos del cliente
-   const id = cliente.id; //Y aca devuelve el id del cliente que se obtuvo a partir del mail.
+    const cliente = resultados[0]; //Aca busca en la posicion 0 donde estan los datos del cliente
+    const id = cliente.id; //Y aca devuelve el id del cliente que se obtuvo a partir del mail.
 
     let getClienteByKey = function () {
         var params = {
@@ -290,6 +290,8 @@ app.post('/api/updateCliente', (req, res) => {
     const { id } = req.body;
     const { nombre } = req.body;
     const { password } = req.body;
+    // "activo":"true"
+    // "registrado":"true"
 
     var activo = ((req.body.activo + '').toLowerCase() === 'true')
     var registrado = ((req.body.registrado + '').toLowerCase() === 'true')
@@ -394,14 +396,14 @@ app.post('/api/resetCliente', async (req, res) => { //se usa para declarar una f
         const id = resultados[0].id; //Al igual que el login por mail, el database solo acepta ids, asi que a partir del mail de la persona, solo se agarra su id para continuar con el proceso
 
         // Preparar actualización
-       const paramsUpdate = {                               // Se crea un objeto de configuración para la operación "update" de DynamoDB
-    TableName: "cliente",                            // Nombre de la tabla en la base de datos donde se hará la actualización
-    Key: { id },                                     // Identifica el registro que se va a modificar usando su clave primaria "id"
-    UpdateExpression: "SET #p = :p",                 // Indica qué campo se va a actualizar (en este caso, el alias "#p") y con qué valor (":p")
-    ExpressionAttributeNames: { "#p": "password" },  // Define el alias "#p" como referencia al atributo real "password" en la tabla
-    ExpressionAttributeValues: { ":p": password },   // Asigna el valor que reemplazará al campo "password" (el valor viene del body del request)
-    ReturnValues: "ALL_NEW"                          // Pide que DynamoDB devuelva todos los valores del registro después de la actualización
-};
+        const paramsUpdate = {                               // Se crea un objeto de configuración para la operación "update" de DynamoDB
+            TableName: "cliente",                            // Nombre de la tabla en la base de datos donde se hará la actualización
+            Key: { id },                                     // Identifica el registro que se va a modificar usando su clave primaria "id"
+            UpdateExpression: "SET #p = :p",                 // Indica qué campo se va a actualizar (en este caso, el alias "#p") y con qué valor (":p")
+            ExpressionAttributeNames: { "#p": "password" },  // Define el alias "#p" como referencia al atributo real "password" en la tabla
+            ExpressionAttributeValues: { ":p": password },   // Asigna el valor que reemplazará al campo "password" (el valor viene del body del request)
+            ReturnValues: "ALL_NEW"                          // Pide que DynamoDB devuelva todos los valores del registro después de la actualización
+        };
 
 
         //Ejecutar el update
