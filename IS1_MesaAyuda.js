@@ -12,7 +12,7 @@
 
 import express from 'express'; //Es un framework web para Node.js. Te permite crear fácilmente servidores, rutas y APIs REST. Para manejar peticiones HTTP.
 import crypto from 'crypto'; //Es un módulo nativo de Node.js para realizar operaciones de seguridad.
-                             //Crypto funciones: Crear hashes.Generar tokens aleatorios.Encriptar y desencriptar datos.Firmar/verificar información
+//Crypto funciones: Crear hashes.Generar tokens aleatorios.Encriptar y desencriptar datos.Firmar/verificar información
 console.log("Comenzando servidor");
 
 // const crypto = require('crypto');
@@ -27,9 +27,9 @@ console.log("express ready!");
 const PORT = 8080; //declara al puerto donde se va a logear como 8080. El localhost:8080 basicamente
 
 import cors from 'cors'; //Para permitir o restringir el acceso a tu API desde otros dominios (orígenes) Se usa cors.
-                         //Por defecto, los navegadores no permiten que una página web en un dominio haga un fetch o catch a otro.
-                          //  esto se llama una petición cross-origin, y está bloqueada por el navegador por seguridad.
-                            //Esto permite que cualquier frontend en cualquier dominio pueda hacer peticiones a tu backend.
+//Por defecto, los navegadores no permiten que una página web en un dominio haga un fetch o catch a otro.
+//  esto se llama una petición cross-origin, y está bloqueada por el navegador por seguridad.
+//Esto permite que cualquier frontend en cualquier dominio pueda hacer peticiones a tu backend.
 //const cors = require('cors');
 console.log("cors ok!");
 
@@ -82,7 +82,7 @@ app.use(express.json());
 función para hacer el parse de un archivo JSON
 */
 function jsonParser(keyValue, stringValue) {  //Ej: Key value: Password. StringValue: Data.id
-                                            
+
     var string = JSON.stringify(stringValue); //Convierte el Data.id a json
     var objectValue = JSON.parse(string); //Convierte el json a objecto
     return objectValue[keyValue]; //devuelve la informacion de la password.
@@ -109,16 +109,16 @@ app.get('/api/cliente', (req, res) => {
 
 app.post('/api/loginCliente', async (req, res) => { //async se usa para declarar una función asíncrona, es decir, una función que puede ejecutar operaciones que toman tiempo.
 
-    const {contacto} = req.body; //Crea dos variables llamadas contacto y password y asignales los valores de las propiedades contacto y password del objeto body.
-    const {password} = req.body; //El request es una funcion del express.js, que es basicamente le hace un pedido a la database
+    const { contacto } = req.body; //Crea dos variables llamadas contacto y password y asignales los valores de las propiedades contacto y password del objeto body.
+    const { password } = req.body; //El request es una funcion del express.js, que es basicamente le hace un pedido a la database
     const resultados = await scanDb(contacto); //Con el mail se busca los datos del cliente, y se usa un await para esperar que termine la funcion.
- //ScanDB busca dentro de la base de datos al cliente por el valor dado (contacto aca), y lo almacena en la constante resultados
+    //ScanDB busca dentro de la base de datos al cliente por el valor dado (contacto aca), y lo almacena en la constante resultados
     if (!resultados || resultados.length == 0) { //corrobora que devuelva un resultado
-        res.status(400).send({response: "ERROR", menssage: "Cliente no encontrado"});
+        res.status(400).send({ response: "ERROR", menssage: "Cliente no encontrado" });
         return;
     }
-    console.log("resultados="+JSON.stringify(resultados)) //convierte a json el resultado
-    
+    console.log("resultados=" + JSON.stringify(resultados)) //convierte a json el resultado
+
     console.log("loginCliente: contacto(" + contacto + ")"); //Se elimino que muestre la contraseña
 
     if (!password) {
@@ -129,22 +129,22 @@ app.post('/api/loginCliente', async (req, res) => { //async se usa para declarar
         res.status(400).send({ response: "ERROR", message: "Contacto no informado" });
         return;
     }
-   const cliente = resultados[0]; 
-   const id = cliente.id; //Y aca devuelve el id del cliente que se obtuvo a partir del mail.
+    const cliente = resultados[0];
+    const id = cliente.id; //Y aca devuelve el id del cliente que se obtuvo a partir del mail.
 
     let getClienteByKey = function () {   // Declara una función llamada getClienteByKey y la asigna a una variable del mismo nombre.
-                                         // Esta función busca un cliente en la tabla "cliente" de DynamoDB usando su clave primaria (id).
+        // Esta función busca un cliente en la tabla "cliente" de DynamoDB usando su clave primaria (id).
         var params = {  /// El objeto params contiene los parámetros que necesita DynamoDB para ejecutar la consulta.
 
             TableName: "cliente", //TableName indica en qué tabla de DynamoDB se va a hacer la operación. En este caso, "cliente" es el nombre de la tabla.
             Key: {         //Key define la clave primaria del registro que querés buscar. "id" es el nombre del atributo que identifica de forma única a cada cliente.
-                          // El valor id (sin comillas) es una variable de JavaScript que se creo antes.
+                // El valor id (sin comillas) es una variable de JavaScript que se creo antes.
                 "id": id
             }
         };
         docClient.get(params, function (err, data) {  // Usa el método 'get' del DocumentClient para obtener el ítem con la clave especificada.
-                                                      // Si ocurre un error de conexión o de acceso, se captura en 'err'. 
-                                                      // Si la operación tiene éxito, los datos devueltos se almacenan en 'data'.
+            // Si ocurre un error de conexión o de acceso, se captura en 'err'. 
+            // Si la operación tiene éxito, los datos devueltos se almacenan en 'data'.
 
             if (err) {
                 res.status(400).send(JSON.stringify({ response: "ERROR", message: "DB access error " + err }));
@@ -230,7 +230,7 @@ async function scanDb(contacto) { //Declaracion de scanDB, es asincrona asi que 
 addCliente
 Revisa si el contacto (e-mail) existe y en caso que no da de alta el cliente generando un id al azar
 */
-app.post('/api/addCliente', (req, res) => { 
+app.post('/api/addCliente', (req, res) => {
 
     const { contacto } = req.body; //Pide los datos del cuerpo del mensaje (por ejemplo, un JSON enviado en un POST
     const { password } = req.body;
@@ -254,7 +254,7 @@ app.post('/api/addCliente', (req, res) => {
 
     scanDb(contacto) //Busca si existe un usuario ya creado con ese mail
         .then(resultDb => {  //Una promesa (asincronico) dice que en algún momento va a darte un valor.
-                             //El then indica que hacer despues de que se obtenga esa promesa.
+            //El then indica que hacer despues de que se obtenga esa promesa.
             if (Object.keys(resultDb).length != 0) { //Chequea si la base de datos devuelve algo
                 res.status(400).send({ response: "ERROR", message: "Cliente ya existe" });
                 return;
@@ -306,12 +306,14 @@ app.post('/api/updateCliente', (req, res) => {
     const { nombre } = req.body; //A diferencia de un req.param, que es de la URL misma.
     const { password } = req.body;
     const { contacto } = req.body; //Se añadio pq si no, no se puede cambiar el mail
+    // "activo":"true"
+    // "registrado":"true"
 
     var activo = ((req.body.activo + '').toLowerCase() === 'true') //Convierte los datos a string
     var registrado = ((req.body.registrado + '').toLowerCase() === 'true') //=== true compara si es true el valor, sino devuelve false.
 
     console.log("updateCliente: id(" + id + ") nombre(" + nombre + ") password(" + password + ") activo(" + activo + ") registrado(" + registrado + ") contacto(" + contacto + ")");
-   //Se añadio que muestre el contacto tambien
+    //Se añadio que muestre el contacto tambien
     if (!id) {
         res.status(400).send({ response: "ERROR", message: "Id no informada" });
         return;
@@ -357,7 +359,7 @@ app.post('/api/updateCliente', (req, res) => {
 
                     },
                     ExpressionAttributeValues: { //Define los valores que se van a asignar en la actualización.
-                        ":a": activo,  
+                        ":a": activo,
                         ":p": password,
                         ":n": nombre,
                         ":r": registrado,
@@ -369,7 +371,7 @@ app.post('/api/updateCliente', (req, res) => {
                     ReturnValues: "ALL_NEW",
                     TableName: "cliente",
                     UpdateExpression: "SET #n = :n, #p = :p, #a = :a, #r = :r, #c = :c" //Es la “instrucción” que DynamoDB ejecuta.
-                                                                 //En este caso, está actualizando varios campos a la vez.
+                    //En este caso, está actualizando varios campos a la vez.
                 }; //se añadio el set de contacto, porque si no, no se puede cambiar.
                 docClient.update(paramsUpdate, function (err, data) {
                     if (err) {
@@ -413,16 +415,16 @@ app.post('/api/resetCliente', async (req, res) => { //se usa para declarar una f
         const id = resultados[0].id; //Al igual que el login por mail, el database solo acepta ids, asi que a partir del mail de la persona, solo se agarra su id para continuar con el proceso
 
         // Preparar actualización
-       const paramsUpdate = {                               // Se crea un objeto de configuración para la operación "update" de DynamoDB
-    TableName: "cliente",                            // Nombre de la tabla en la base de datos donde se hará la actualización
-    Key: { id },                                     // Identifica el registro que se va a modificar usando su clave primaria "id"
-    UpdateExpression: "SET #p = :p",                 // Indica qué campo se va a actualizar (en este caso, el alias "#p") y con qué valor (":p")
-    ExpressionAttributeNames: { "#p": "password" },  // Define el alias "#p" como referencia al atributo real "password" en la tabla
-    ExpressionAttributeValues: { ":p": password },   // Asigna el valor que reemplazará al campo "password" (el valor viene del body del request)
-    ReturnValues: "ALL_NEW"                          // Pide que DynamoDB devuelva el item completo. después de la actualización. Osea cliente
-};  //Dato: En JavaScript, el orden de las propiedades en un objeto no afecta su funcionalidad
-    //Aunque el set se defina antes del alias y los valores, anda igual
-    //Es como si tuviera una receta donde dice "Usa ingredientes A y B". Y los ingredientes esta abajo de esa consigna.
+        const paramsUpdate = {                               // Se crea un objeto de configuración para la operación "update" de DynamoDB
+            TableName: "cliente",                            // Nombre de la tabla en la base de datos donde se hará la actualización
+            Key: { id },                                     // Identifica el registro que se va a modificar usando su clave primaria "id"
+            UpdateExpression: "SET #p = :p",                 // Indica qué campo se va a actualizar (en este caso, el alias "#p") y con qué valor (":p")
+            ExpressionAttributeNames: { "#p": "password" },  // Define el alias "#p" como referencia al atributo real "password" en la tabla
+            ExpressionAttributeValues: { ":p": password },   // Asigna el valor que reemplazará al campo "password" (el valor viene del body del request)
+            ReturnValues: "ALL_NEW"                          // Pide que DynamoDB devuelva el item completo. después de la actualización. Osea cliente
+        };  //Dato: En JavaScript, el orden de las propiedades en un objeto no afecta su funcionalidad
+        //Aunque el set se defina antes del alias y los valores, anda igual
+        //Es como si tuviera una receta donde dice "Usa ingredientes A y B". Y los ingredientes esta abajo de esa consigna.
 
         //Ejecutar el update
         docClient.update(paramsUpdate, function (err, data) { //El paramsupdate definido arriba
@@ -464,8 +466,8 @@ async function scanDbTicket(clienteID) {
   API REST para obtener todos los tickets de un clienteID. Aca se aplica el SCANDBTicket de alla arriba
 */
 app.post('/api/listarTicket', (req, res) => { //Aca lista todos los tickets de un cliente por su id
-                                               //Usa una función (scanDbTicket) que hace un scan filtrando por clienteID
-    const { ID } = req.body;   
+    //Usa una función (scanDbTicket) que hace un scan filtrando por clienteID
+    const { ID } = req.body;
     console.log("listarTicket: ID(" + ID + ")");
 
     if (!ID) {
@@ -475,7 +477,7 @@ app.post('/api/listarTicket', (req, res) => { //Aca lista todos los tickets de u
 
     scanDbTicket(ID)
         .then(resultDb => {
-            if (Object.keys(resultDb).length == 0) { 
+            if (Object.keys(resultDb).length == 0) {
                 res.status(400).send({ response: "ERROR", message: "clienteID no tiene tickets" });
                 return;
             } else {
@@ -491,7 +493,7 @@ app.post('/api/listarTicket', (req, res) => { //Aca lista todos los tickets de u
   API REST para obtener los detalles de un ticket
 */
 app.post('/api/getTicket', (req, res) => { //Este muestra un ticket en especifico con todos sus datos.
-    const { id } = req.body;              
+    const { id } = req.body;
     console.log("getTicket: id(" + id + ")");
 
     if (!id) {
