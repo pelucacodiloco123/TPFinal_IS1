@@ -122,7 +122,7 @@ fetch(`${APIREST_URL}`,options)
         if (t.clienteID == query.id) {
             if (f==false) {
                 f=true;
-                const hdr=["Cliente","ID","Motivo", "Solucion", "Estado","Fecha"]; //Titulo de las celdas
+                const hdr=["Cliente.ID","Ticket.ID","Motivo", "Solucion", "Estado","Fecha"]; //Titulo de las celdas
                 let tr=document.createElement("tr");
                 tr.style.border="1px solid";
                 hdr.forEach((item) => {

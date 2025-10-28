@@ -129,7 +129,7 @@ app.post('/api/loginCliente', async (req, res) => { //async se usa para declarar
         res.status(400).send({ response: "ERROR", message: "Contacto no informado" });
         return;
     }
-    const cliente = resultados[0];
+    const cliente = resultados[0]; //Obtiene el primer (y único) cliente del array de resultados devuelto por scanDb 
     const id = cliente.id; //Y aca devuelve el id del cliente que se obtuvo a partir del mail.
 
     let getClienteByKey = function () {   // Declara una función llamada getClienteByKey y la asigna a una variable del mismo nombre.
