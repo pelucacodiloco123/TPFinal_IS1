@@ -2,15 +2,18 @@
 /*---
 Función para procesar los parámetros recibidos en el URL
 */
-function getQueryParams(qs) {
-    qs = qs.split('+').join(' ');
+function getQueryParams(qs) { //Todo que va despues de la ? en la URL es un queryparam. Aca lo que hace es agarrarlos
+    qs = qs.split('+').join(' '); //Remplaza las + por espacios, pq asi se escribe en URL.
 
-    var params = {},
+    var params = {}, //Aca se guardara la clave-valor
         tokens,
-        re = /[?&]?([^=]+)=([^&]*)/g;
+        re = /[?&]?([^=]+)=([^&]*)/g; //[^=]+ es el nombre del parámetro (todo lo que no sea =).
+                                      //([^&]*) es el valor del parámetro (todo lo que no sea &).
 
     while (tokens = re.exec(qs)) {
-        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]); //tokens[1] = nombre del parámetro
+                                                                               //okens[2] = valor del parámetro
+                                                                               //decodeURIComponent()
     }
 
     return params;
@@ -22,16 +25,18 @@ Extrae del URL el id de cliente ya validado, su nombre y la última fecha de log
 
 console.log("Comienza listarTicket.js");
 
-var query = getQueryParams(document.location.search);
+var query = getQueryParams(document.location.search); //Busca la locacion de la pagina donde estas parado actualmente
 console.log("id:"+query.id);
 console.log("nombre:"+query.nombre); /*Aca se modificaron los datos que se ven al mostrar ticket*/
-console.log("contacto:"+query.contacto);
+console.log("contacto:"+query.contacto); //Estos son logs
 console.log("ultima_fecha:"+query.fecha_ultimo_ingreso);
 console.log("mode:"+query.mode);
 
+//Esto de aca es el texto que se muestra arriba de la tablita del ticket
 document.getElementById("lastlogin").innerHTML = "<table><tr><td>Cliente</td><td>"+query.id+"</td></tr><tr><td>Nombre</td><td>"+query.nombre+"</td></tr><tr><td>Contacto</td><td>"+query.contacto+"</td></tr></tr><tr><td>Ultimo ingreso</td><td>"+query.fecha_ultimo_ingreso+"</td></tr></table>";
 /*Aca se modificaron los datos para ver que muestra en el listar ticket*/
-
+//InnerHTML es para que se muestre dinamicamente, pq si no, no podrias mostrar mas tickets de los que hay definidos en el html
+//Esta parte busca el que tenga el id de lastlogin
 const systemURL={ 
 
     listarTicket    : "http://127.0.0.1:5500/HTML/listarTicket.html",
@@ -52,18 +57,18 @@ AWS
 
 */
 
-const HTMLResponse=document.querySelector("#app");
+const HTMLResponse=document.querySelector("#app"); //Busca quien tiene el id app y lo almacena en HTMLResponse
 var ticket = {
-    "ID" : query.id,
+    "ID" : query.id, //Le pasa que el id definido en el query aca
 };
     
 var options = {
-    method: 'GET',
+    method: 'GET', //Options generalizado que despues se sobreescribe dependiendo el modo en el que este
     };
 var APIREST_URL='';
 console.log('transferred mode:'+query.mode);    
 
-switch (query.mode) {
+switch (query.mode) { //Hace de forma distinta segun el modo en el que este
   case "LOCAL":
     console.log("Utiliza servidor NodeJS local.");
     console.log("API_listarTicket:"+RESTAPI.listarTicket); 
@@ -71,7 +76,7 @@ switch (query.mode) {
     ticket = {
        "ID" : query.id,
     };
-    
+
     options = {
        method: 'POST',
        headers: {
@@ -117,7 +122,7 @@ fetch(`${APIREST_URL}`,options)
         if (t.clienteID == query.id) {
             if (f==false) {
                 f=true;
-                const hdr=["Cliente","ID.Ticket","Motivo","Estado","Fecha"];
+                const hdr=["Cliente","ID","Motivo", "Solucion", "Estado","Fecha"]; //Titulo de las celdas
                 let tr=document.createElement("tr");
                 tr.style.border="1px solid";
                 hdr.forEach((item) => {
@@ -125,13 +130,15 @@ fetch(`${APIREST_URL}`,options)
                     th.style.border="1px solid";
 
                     th.innerText = item;
-                    tr.appendChild(th);
-                });
+                    tr.appendChild(th); //Appendchild crea un elemento dentro del padre table
+                });                       //Los hijos son los th y los tr
+                                            //Tr los elementos de la tabla
+                                            //td es la celda
+                                            //th es la cabecera de la tabla
                 table.appendChild(tr);                   
             }
 
-            const body=[t.clienteID,`${t.id}`,`${t.solucion}`,`${t.estado_solucion}`,`${t.ultimo_contacto}`];
-            
+            const body=[t.clienteID,`${t.id}`,`${t.descripcion}`,`${t.solucion}`, `${t.estado_solucion}`,`${t.ultimo_contacto}`]; //Contenido de estas
             let trl=document.createElement("tr");
             body.forEach((line) => {
                 let td=document.createElement("td");
@@ -147,7 +154,7 @@ fetch(`${APIREST_URL}`,options)
         console.log(table);
         HTMLResponse.appendChild(table);
     } else {
-
+            //Mensajes de error
         console.log("no tiene tickets");
         document.getElementById('mensajes').style.textAlign = "center";
         document.getElementById('mensajes').style.color="RED";
