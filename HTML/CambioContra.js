@@ -12,17 +12,23 @@ form.addEventListener("submit", async (event) => { //Indica que va a haber una e
     mensaje.textContent = "Las contraseñas no coinciden";
     return;
   }
+  if (!data.contacto) {
+		document.getElementById('resultado2').style.color = 'RED';
+		document.getElementById('resultado2').textContent =
+			'Debe insertar un mail valido ';
+		return;
+	}
 
   const body = { //Se crea un objecto body que es lo que se va a enviar al servidor para actualizarlo
     contacto: data.contacto,
     password: data.password,
   };
   const RESTAPI = {
-		resetCliente: 'http://localhost:8080/api/resetCliente',
+		resetCliente: 'http://localhost:8080/api/resetCliente', //backend
 	};
 
 	// Configuración del fetch
-	const options = {
+	const options = { //metodo que va a hacer
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -31,11 +37,11 @@ form.addEventListener("submit", async (event) => { //Indica que va a haber una e
 	};
 
 fetch(RESTAPI.resetCliente, options)
-		.then((res) => res.json()) //toma la respuesta de json y lo transforma en un objecto
-		.then((response) => {
+		.then((res) => res.json()) //res es la respuesta en HTTP y lo convierte a un json.
+		.then((response) => { //Response es el objecto javascript final
 			console.log('Respuesta del servidor:', response);
 
-			if (response.response === 'OK') {
+			if (response.response === 'OK') { //y esto es el objecto del backend.response. Osea el la respuesta del objecto.response
 				//  Registro exitoso
 				window.location.href = 'loginClient.html';
 			} else {
