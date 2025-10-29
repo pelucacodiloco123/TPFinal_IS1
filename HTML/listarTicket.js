@@ -114,7 +114,7 @@ fetch(`${APIREST_URL}`,options)
     let f = false;
     let table = document.createElement("table");
     table.style.border = "1px solid";
-    table.style.backgroundColor = "#626607";
+    table.style.backgroundColor = "#ffffffff";
     
     // Verificar si hay datos y son del cliente correcto
     if (ticket.data && ticket.data.length > 0) {
