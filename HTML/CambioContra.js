@@ -9,13 +9,13 @@ form.addEventListener("submit", async (event) => { //Indica que va a haber una e
 
   if (data.password !== data.password2) { //Comprueba si las contraseñas son iguales
     mensaje.style.color = "red";
-    mensaje.textContent = "Las contraseñas no coinciden";
+    mensaje.textContent = "Error de login";
     return;
   }
   if (!data.contacto) {
 		document.getElementById('resultado2').style.color = 'RED';
 		document.getElementById('resultado2').textContent =
-			'Debe insertar un mail valido ';
+			'error de login ';
 		return;
 	}
 
