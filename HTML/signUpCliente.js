@@ -22,7 +22,7 @@ formEl.addEventListener('submit', (event) => { //Le dice al navegador: Despues d
 	if (data.password !== data["confirmar contraseña"]) {
 		document.getElementById('resultado1').style.color = 'RED';
 		document.getElementById('resultado1').textContent =
-			'error de login';
+			'Las passwords no coinciden';
 		return;
 	}
 

@@ -9,7 +9,7 @@ form.addEventListener("submit", async (event) => { //Indica que va a haber una e
 
   if (data.password !== data.password2) { //Comprueba si las contraseñas son iguales
     mensaje.style.color = "red";
-    mensaje.textContent = "Error de login";
+    mensaje.textContent = "Las passwords no coinciden";
     return;
   }
   if (!data.contacto) {
