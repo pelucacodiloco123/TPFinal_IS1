@@ -105,59 +105,57 @@ console.log("APIREST_URL:"+APIREST_URL);
 console.log("ticket  :"+JSON.stringify(ticket));
 console.log("options :"+JSON.stringify(options));
 
-
 fetch(`${APIREST_URL}`,options)
 .then(res => {
     return res.json();
-}).then(ticket=>{
+}).then(ticket => {
     console.log("ticket:");
     console.log(ticket);
-    let f=false;
-    let table=document.createElement("table");
-    table.style.border="1px solid";
-    table.style.backgroundColor="##626607";
-//ticket.uresponse.forEach((t)=> { 
-    ticket.data.forEach((t)=> { 
-        console.log(t.clienteID)
-        if (t.clienteID == query.id) {
-            if (f==false) {
-                f=true;
-                const hdr=["Cliente.ID","Ticket.ID","Motivo", "Solucion", "Estado","Fecha"]; //Titulo de las celdas
-                let tr=document.createElement("tr");
-                tr.style.border="1px solid";
-                hdr.forEach((item) => {
-                    let th=document.createElement("th");
-                    th.style.border="1px solid";
-
-                    th.innerText = item;
-                    tr.appendChild(th); //Appendchild crea un elemento dentro del padre table
-                });                       //Los hijos son los th y los tr
-                                            //Tr los elementos de la tabla
-                                            //td es la celda
-                                            //th es la cabecera de la tabla
-                table.appendChild(tr);                   
+    let f = false;
+    let table = document.createElement("table");
+    table.style.border = "1px solid";
+    table.style.backgroundColor = "#626607";
+    
+    // Verificar si hay datos y son del cliente correcto
+    if (ticket.data && ticket.data.length > 0) {
+        ticket.data.forEach((t) => { 
+            console.log(t.clienteID);
+            if (t.clienteID == query.id) {
+                if (f == false) {
+                    f = true;
+                    const hdr = ["ClienteID","TicketID","Motivo", "Solucion", "Estado","Fecha"];
+                    let tr = document.createElement("tr");
+                    tr.style.border = "1px solid";
+                    hdr.forEach((item) => {
+                        let th = document.createElement("th");
+                        th.style.border = "1px solid";
+                        th.innerText = item;
+                        tr.appendChild(th);
+                    });
+                    table.appendChild(tr);
+                }
+                
+                const body = [t.clienteID, `${t.id}`, `${t.descripcion}`, `${t.solucion}`, `${t.estado_solucion}`, `${t.ultimo_contacto}`];
+                let trl = document.createElement("tr");
+                body.forEach((line) => {
+                    let td = document.createElement("td");
+                    td.style.border = "1px solid";
+                    td.innerText = line;
+                    trl.appendChild(td);
+                });
+                table.appendChild(trl);
             }
-
-            const body=[t.clienteID,`${t.id}`,`${t.descripcion}`,`${t.solucion}`, `${t.estado_solucion}`,`${t.ultimo_contacto}`]; //Contenido de estas
-            let trl=document.createElement("tr");
-            body.forEach((line) => {
-                let td=document.createElement("td");
-                td.style.border="1px solid";
-                td.innerText = line;
-                trl.appendChild(td);
-            });
-            table.appendChild(trl);                   
-        }
-    });
-
+        });
+    }
+    
+    // Mostrar tabla o mensaje de error
     if (f) {
         console.log(table);
         HTMLResponse.appendChild(table);
     } else {
-            //Mensajes de error
         console.log("no tiene tickets");
         document.getElementById('mensajes').style.textAlign = "center";
-        document.getElementById('mensajes').style.color="RED";
+        document.getElementById('mensajes').style.color = "RED";
         document.getElementById("mensajes").innerHTML = "No hay tickets pendientes";
     }
 });
