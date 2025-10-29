@@ -20,25 +20,15 @@ formE1.addEventListener('submit', (event) => { //Le dice al navegador: Despues d
 		Realiza validaciones en los datos del formulario antes de procesar
 		*/
 
-	if (data.contacto == '') { //Aca se remplazo para que se chequee que si hay mail, y no un id a la hora del login
-		console.log('debe indicar usuario');
+	if (!data.contacto || !data.password) { //Aca se remplazo para que se chequee que si hay mail, y no un id a la hora del login
+		console.log('Error de login');
 		document.getElementById('resultado1').style.color = 'RED'; //Colores del error y eso
 		document.getElementById('resultado1').style.textAlign = 'center';
-		document.getElementById('resultado1').textContent = 'Debe informar usuario para  completar el acceso';
+		document.getElementById('resultado1').textContent = 'Error de login';
 		return;  //Se modifica resultado1 para que sea solo error del usuario
 	}
-	 //se dividio en dos como el diseño pedido en el tp, un error arriba y otro abajo.
-	if (data.password == '') { //Chequea que haya una password
-		console.log('debe indicar password');
-		document.getElementById('resultado3').style.color = 'RED';  //Se creo el resultado3, que es el error de la password sola.
-		document.getElementById('resultado3').style.textAlign = 'center';
-		document.getElementById('resultado3').textContent =
-			'Debe informar password para  completar el acceso';
-		return;
-	}
 
-
-	if (data.id == 'pec') {   /*--Fix hecho por  Germán Lombardi IS1-2025 */ //Esto dice que si el id es pec, no te deje entrar
+	if (data.contacto == 'pec@gmail.com') {   /*--Fix hecho por  Germán Lombardi IS1-2025 */ //Esto dice que si el id es pec, no te deje entrar
 		console.log('pec no es bienvenido en éste sistema');
 		const m = '<li>El usuario <pec> no es bienvenido en éste sistema</li>';
 		document.getElementById('resultado2').style.color = 'RED';
@@ -60,9 +50,9 @@ formE1.addEventListener('submit', (event) => { //Le dice al navegador: Despues d
 		Genera objeto HTML a ser actualizado en el tag identificado como "app"
 		*/
 
-	const HTMLResponse = document.querySelector('#app'); //Busca el <div id="app"> del HTML para poder usarlo desde JS.
-	const ul = document.createElement('ul'); //Crea una lista <ul> desde cero, en memoria, pero aún no la muestra.
-	const tpl = document.createDocumentFragment();  //Esto crea un contenedor invisible en memoria llamado tpl.
+	// const HTMLResponse = document.querySelector('#app'); //Busca el <div id="app"> del HTML para poder usarlo desde JS.
+	// const ul = document.createElement('ul'); //Crea una lista <ul> desde cero, en memoria, pero aún no la muestra.
+	// const tpl = document.createDocumentFragment();  //Esto crea un contenedor invisible en memoria llamado tpl.
 	                                                // Es como un carrito donde metés varias cosas antes de ponerlas todas de golpe en el DOM.
 	const systemURL = { //Es un objeto que guarda URLs de páginas HTML locales, que forman parte del frontend.
 		listarTicket: 'http://127.0.0.1:5500/HTML/listarTicket.html', 
@@ -152,14 +142,14 @@ formE1.addEventListener('submit', (event) => { //Le dice al navegador: Despues d
 		.then((res) => {
 			return res.json(); //cuando el servidor responde, se lo convierte a json
 		})
-		.then((users) => { //Users es el objecto que el backend devolvio. Osea el cliente
+		.then((users) => { //Users es el res ya convertido a json
 			console.log(
 				'Datos en respuesta del application server=' + JSON.stringify(users) //Console logs para ver si esta todo correcto
 			);
 			console.log('users.response=' + users.password);
 			if (users.response == 'OK') {
 				//<==Habilitar esto para dejar que el API REST verifique sin exponer la password
-				console.log('La password es correcta');
+				console.log('Login correcto');
 				console.log(
 					'nombre(' +
 					users.nombre +
@@ -201,10 +191,16 @@ formE1.addEventListener('submit', (event) => { //Le dice al navegador: Despues d
 					users.fecha_ultimo_ingreso +
 					'&mode=' + MODE; //Aca se muestra en que modo estas
 			} else {
-				console.log('La password no es correcta');
-				document.getElementById('resultado3').style.color = 'RED'; //Muestra error si algo falla /*--Fix hecho por  Germán Lombardi IS1-2025 */
+				console.log('Error de login');
+				document.getElementById('resultado3').style.color = 'RED'; //Muestra error si algo falla /*
 				document.getElementById('resultado3').textContent =
-					'Error de login, intente nuevamente';                  /*--Fix hecho por  Germán Lombardi IS1-2025 */
+					'Error de login, intente nuevamente';                
 			}
+		})
+		.catch((error) => {
+			console.error('Error en fetch:', error);
+			document.getElementById('resultado1').style.color = 'RED';
+			document.getElementById('resultado1').style.textAlign = 'center';
+			document.getElementById('resultado1').textContent = 'Error de conexión con el servidor';
 		});
 });
